@@ -1,5 +1,5 @@
-Εδώ δίνεται ο κώδικας για τη λειτουργία του σερβοκινητήρα της κούνιας, της τραμπάλας και του κινητήρα που πρειστρέφει το καρουζέλ. 
-Είναι ο τελικός κώδικας σε arduino.
+Εδώ δίνεται ο κώδικας για τη λειτουργία του σερβοκινητήρα της κούνιας, της τραμπάλας και του κινητήρα που περιστρέφει το καρουζέλ. 
+
 Αρχικά η θέση του σερβοκινητήρα είναι σε τέτοια θέση ώστε να είναι οριζόντια η τραμπάλα και κάθετη η κούνια.
 Ανάλογα πως  τοποθετήσαμε τυος σερβοκινητήρες στην αρχική τους θέση. 
 Ο διακόπτης συνδέεται με μια αντίσταση και ένα led ώστε όταν είναι κλειστός (θέση 1) τότε να διαρρέει ρεύμα το led και αυτό να ανάβει. 
@@ -19,32 +19,62 @@
 #include <Servo.h>
 
 Servo servo_pin_3;
+Servo servo_pin_4;
 
 void setup()
 {
-  pinMode( 8, INPUT);// το Pin που ελέγχει αν περνάει ρεύμα από το led, δηλαδή αν είναι ο διακόπτης στη θέση Ι ή 0
-  pinMode( 5, OUTPUT); // η ακίδα για τον κινητήρα, τον συνδέσαμε σε μια αναλογική ώστε να περιστρέφεται με μικρότερη ταχύτητα
-  servo_pin_3.attach(3);// η ακίδα όπου είναι ο σερβοκινητήρας
+  pinMode( 9, INPUT);
+  pinMode( 8, INPUT);
+  pinMode( 5, OUTPUT);
+  servo_pin_3.attach(3);
+  servo_pin_4.attach(4);
   pinMode( 5 , OUTPUT);
-  servo_pin_3.write( 20 );// αρχικά σε θέση 20 μοιρών- οριζόντια θέση
+  servo_pin_3.write( 15 );
 
-  digitalWrite( 5 , LOW );// αρχικά ο κινητήρας σταματημένος
+  servo_pin_4.write( 70 );
+
+  digitalWrite( 5 , LOW );
 
 }
 
 void loop()
 {
-  analogWrite(5 , 150); // περιστρέφεται ο κινητήρας με ταχύτητα 150 συνέχεια
-  if (( ( digitalRead(8) ) == ( HIGH ) ))// αν περνάει ρεύμα από το led τότε
+  analogWrite(5 , 150);
+  if (( ( ( digitalRead(8) ) == ( HIGH ) ) && ( ( digitalRead(9) ) == ( HIGH ) ) ))
   {
-    servo_pin_3.write( 0 );// αρχίζει να κινείται ο σερβοκινητήρας ανά μισό δευτερόλεπτο
+    servo_pin_3.write( 0 );
+    servo_pin_4.write( 50 );
     delay( 500 );
-    servo_pin_3.write( 40 );
+    servo_pin_3.write( 30 );
+    servo_pin_4.write( 90 );
     delay( 500 );
   }
   else
   {
-    servo_pin_3.write( 20 );// αλλιώς μένει στην αρχική γωνία στην οριζόντια θέση
+    if (( ( ( digitalRead(8) ) == ( HIGH ) ) && ( ( digitalRead(9) ) == ( LOW ) ) ))
+    {
+      servo_pin_4.write( 70 );
+      servo_pin_3.write( 0 );
+      delay( 500 );
+      servo_pin_3.write( 30 );
+      delay( 500 );
+    }
+    else
+    {
+      if (( ( ( digitalRead(8) ) == ( LOW ) ) && ( ( digitalRead(9) ) == ( HIGH ) ) ))
+      {
+        servo_pin_3.write( 15 );
+        servo_pin_4.write( 50 );
+        delay( 500 );
+        servo_pin_4.write( 90 );
+        delay( 500 );
+      }
+      else
+      {
+        servo_pin_3.write( 15 );
+        servo_pin_4.write( 70 );
+      }
+    }
   }
 }
 
